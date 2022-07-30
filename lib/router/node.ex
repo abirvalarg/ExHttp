@@ -5,33 +5,11 @@ defmodule ExHttp.Router.Node do
     index: nil | any,
     paths: %{String.t => t}
   }
-
-  @spec add_route(t, [String.t], any) :: t
-  def add_route self, [], func do
-    %__MODULE__{ self | index: func }
-  end
-
-  def add_route self, [ path | rest ], func do
-    next = (self.paths[path] || %__MODULE__{})
-    |> add_route(rest, func)
-
-    %__MODULE__{ self | paths: Map.put_new(self.paths, path, next) }
-  end
-
-  @spec add_node(t, [String.t], any) :: t
-  def add_node self, [ path ], node do
-    %__MODULE__{ self | paths: Map.put_new(self.paths, path, node) }
-  end
-
-  def add_node self, [ path | rest ], node do
-    next = (self.paths[path] || %__MODULE__{})
-    |> add_node(rest, node)
-
-    %__MODULE__{ self | paths: Map.put_new(self.paths, path, next) }
-  end
 end
 
 defimpl ExHttp.Router, for: ExHttp.Router.Node do
+  alias ExHttp.Router.Node
+
   def route self, request, [] do
     if self.index do
       self.index.(request)
@@ -47,5 +25,27 @@ defimpl ExHttp.Router, for: ExHttp.Router.Node do
     else
       ExHttp.Http.Response.from_status :not_found
     end
+  end
+
+  def add_route self, [], func do
+    %Node{ self | index: func }
+  end
+
+  def add_route self, [ path | rest ], func do
+    next = (self.paths[path] || %Node{})
+    |> add_route(rest, func)
+
+    %Node{ self | paths: Map.put_new(self.paths, path, next) }
+  end
+
+  def add_node self, [ path ], node do
+    %Node{ self | paths: Map.put_new(self.paths, path, node) }
+  end
+
+  def add_node self, [ path | rest ], node do
+    next = (self.paths[path] || %Node{})
+    |> add_node(rest, node)
+
+    %Node{ self | paths: Map.put_new(self.paths, path, next) }
   end
 end

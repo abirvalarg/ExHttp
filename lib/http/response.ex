@@ -64,7 +64,7 @@ defimpl String.Chars, for: ExHttp.Http.Response do
 
     resp = List.foldl self.cookies, resp, fn cookie, resp -> resp <> "Set-Cookie: " <> Kernel.to_string(cookie) <> "\r\n" end
 
-    if self.body and self.body !== "" do
+    if self.body && self.body !== "" do
       resp <> "Content-Length: #{String.length self.body}\r\n\r\n" <> self.body
     else
       resp <> "\r\n"
