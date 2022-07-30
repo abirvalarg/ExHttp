@@ -17,7 +17,7 @@ defmodule ExHttp.Http.Cookie do
   end
 end
 
-defimpl String.Chars, for: Backend.Http.Cookie do
+defimpl String.Chars, for: ExHttp.Http.Cookie do
   def to_string self do
     cookie = "#{self.name}=#{self.val}"
     cookie = if self.same_site do
