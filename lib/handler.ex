@@ -1,4 +1,9 @@
 defmodule ExHttp.Handler do
+  @moduledoc """
+  This module is used internally to handle the request and pass it to
+  the handler
+  """
+
   use GenServer
   alias ExHttp.Http.{Response, Request}
   alias ExHttp.Router

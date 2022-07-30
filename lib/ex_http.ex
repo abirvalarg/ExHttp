@@ -1,4 +1,16 @@
 defmodule ExHttp do
+  @moduledoc """
+  Core of the server. Add this module to a supervisor tree of your app
+
+  ## Options
+  - `:host` - IP address for the listening socket. Default is `:any`
+  - `:port` - Port to start the server on. Default is `8080`
+  - `router` - An object that implements `ExHttp.Router` protocol, used to route requests
+
+  ## Stopping the server
+  Use `GenServer.cast` with `:stop` atom to stop the server
+  """
+
   use GenServer
 
   defstruct socket: nil, router: nil

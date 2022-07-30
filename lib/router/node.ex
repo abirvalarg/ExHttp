@@ -1,4 +1,8 @@
 defmodule ExHttp.Router.Node do
+  @moduledoc """
+  Default router node
+  """
+
   defstruct index: nil, paths: %{}
 
   @type t :: %ExHttp.Router.Node{

@@ -1,4 +1,8 @@
 defmodule ExHttp.Http.Cookie do
+  @moduledoc """
+  Represents an HTTP cookie
+  """
+
   defstruct name: "", val: "", same_site: nil, max_age: nil, http_only: true
 
   @type t :: %ExHttp.Http.Cookie{
@@ -9,6 +13,9 @@ defmodule ExHttp.Http.Cookie do
   }
 
   @spec new(String.t, String.t) :: t
+  @doc """
+  Convenience function to create a new default cookie
+  """
   def new name, val do
     %__MODULE__{
       name: name,

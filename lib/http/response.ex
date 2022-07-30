@@ -1,4 +1,8 @@
 defmodule ExHttp.Http.Response do
+  @moduledoc """
+  Represents an HTTP response. This object should be returned from the handler
+  """
+
   defstruct code: 200, status: "OK", headers: %{}, cookies: [], body: ""
 
   @type t :: %ExHttp.Http.Response{
@@ -12,6 +16,14 @@ defmodule ExHttp.Http.Response do
   @type status :: :bad_request | :not_found | :internal
 
   @spec from_status(status) :: Backend.Http.Response.t()
+  @doc """
+  Generate a response from an atom status
+
+  supported status atoms:
+  - `:bad_request`
+  - `:not_found`
+  - `:internal`
+  """
   def from_status(:bad_request), do: bad_request()
   def from_status(:not_found), do: not_found()
   def from_status(:internal), do: internal_error()
@@ -21,12 +33,18 @@ defmodule ExHttp.Http.Response do
   end
 
   @spec add_header(t, String.t, String.t) :: t
+  @doc """
+  Add a header to the response
+  """
   def add_header self, key, val do
     headers = Map.put self.headers, key, val
     %__MODULE__{ self | headers: headers }
   end
 
   @spec content_type(t, String.t) :: t
+  @doc """
+  Set the content type
+  """
   def content_type self, type do
     add_header self, "Content-Type", type
   end

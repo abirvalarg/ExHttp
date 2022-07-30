@@ -1,4 +1,8 @@
 defmodule ExHttp.Http.Request do
+  @moduledoc """
+  Represents an HTTP request
+  """
+
   defstruct method: "GET", uri: "/", args: %{}, headers: %{}, cookies: %{}, content_len: nil, body: nil
 
   @type t :: %ExHttp.Http.Request{
@@ -14,6 +18,9 @@ defmodule ExHttp.Http.Request do
 
 
   @spec add_header(req, binary) :: {:error, :bad_request} | {:ok, Backend.Http.Request.t()}
+  @doc """
+  Used internally to add header lines to the request objects
+  """
   def add_header({ :ok, req }, line), do: add_header req, line
 
   def add_header nil, line do
@@ -58,6 +65,9 @@ defmodule ExHttp.Http.Request do
   end
 
   @spec add_body(req, String.t) :: { :ok, t } | { :error, :bad_request }
+  @doc """
+  Used internally to append data to request body
+  """
   def add_body({ :ok, self }, buffer), do: add_body self, buffer
   def add_body({ :error, status }, _), do: { :error, status }
   def add_body self, buffer do
@@ -66,6 +76,10 @@ defmodule ExHttp.Http.Request do
   end
 
   @spec data(t) :: { :ok, %{ String.t => String.t } } | { :error, :bad_request | :incomplete | :no_data }
+  @doc """
+  Decode data from request body. This method check `Content-Type` header. Only
+  URL-encoded data is supported yet
+  """
   def data self do
     if body_complete? self do
       type = self.headers["Content-Type"]
@@ -82,7 +96,7 @@ defmodule ExHttp.Http.Request do
     end
   end
 
-  def parse_urlencoded body do
+  defp parse_urlencoded body do
     data = for pair <- String.split(body, "&") do
       with [ key, value ] <- String.split(pair, "=") do
         { :uri_string.percent_decode(key), :uri_string.percent_decode(value) }
@@ -94,5 +108,9 @@ defmodule ExHttp.Http.Request do
   end
 
   @spec body_complete?(t) :: boolean
+  @doc """
+  Used internally to check whether to wait for next piece of data or pass
+  the request to the handler
+  """
   def body_complete?(self), do: self.content_len == nil or self.content_len == String.length(self.body)
 end
