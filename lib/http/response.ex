@@ -22,7 +22,7 @@ defmodule ExHttp.Http.Response do
 
   @spec add_header(t, String.t, String.t) :: t
   def add_header self, key, val do
-    headers = Map.put_new self.headers, key, val
+    headers = Map.put self.headers, key, val
     %__MODULE__{ self | headers: headers }
   end
 

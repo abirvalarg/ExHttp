@@ -49,7 +49,7 @@ defmodule ExHttp.Http.Request do
             end
           end
           %__MODULE__{ self | cookies: Enum.into(cookies, %{}) }
-        _ -> %__MODULE__{ self | headers: Map.put_new(self.headers, name, val) }
+        _ -> %__MODULE__{ self | headers: Map.put(self.headers, name, val) }
       end
       { :ok, self }
     else
