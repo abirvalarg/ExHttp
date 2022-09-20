@@ -8,11 +8,12 @@ defmodule ExHttp.Handler do
   alias ExHttp.Http.{Response, Request}
   alias ExHttp.Router
 
-  defstruct client: nil, request: nil, buffer: "", router: nil
+  defstruct client: nil, request: nil, buffer: "", router: nil, log: true
 
   @impl true
-  def init [ client: client, router: router ] do
-    { :ok, %__MODULE__{ client: client, router: router } }
+  def init [ client: client, router: router ] = args do
+    log = if args[:log] == nil, do: true, else: args[:log]
+    { :ok, %__MODULE__{ client: client, router: router, log: log } }
   end
 
   @impl true
@@ -38,6 +39,9 @@ defmodule ExHttp.Handler do
         if Request.body_complete? request do
           path = String.split request.uri, "/", trim: true
           response = Router.route state.router, request, path
+          if state.log do
+            IO.puts "#{request.method} #{request.uri} #{response.code} #{response.status}"
+          end
          { nil, response }
         else
           { request, nil }
