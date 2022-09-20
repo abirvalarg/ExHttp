@@ -3,7 +3,7 @@ defprotocol ExHttp.Router do
   A protocol for router objects
   """
 
-  @spec route(any, ExHttp.Http.Request.t, [String.t]) :: ExHttp.Http.Response.t
+  @spec route(any, ExHttp.Http.Request.t, [binary]) :: ExHttp.Http.Response.t
   @doc """
   Routes the request to the handler and returns the response object
   """

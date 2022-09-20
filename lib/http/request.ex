@@ -10,14 +10,14 @@ defmodule ExHttp.Http.Request do
     uri: String.t,
     args: %{String.t => String.t},
     headers: %{String.t => String.t},
-    cookies: %{String.t => Backend.Http.Cookie.t},
+    cookies: %{String.t => String.t},
     content_len: integer,
     body: String.t
   }
   @type req :: t | { :ok, t } | { :error, reason :: term }
 
 
-  @spec add_header(req, binary) :: {:error, :bad_request} | {:ok, Backend.Http.Request.t()}
+  @spec add_header(req, binary) :: {:error, :bad_request} | {:ok, t()}
   @doc """
   Used internally to add header lines to the request objects
   """

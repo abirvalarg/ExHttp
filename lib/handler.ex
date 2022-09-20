@@ -38,7 +38,7 @@ defmodule ExHttp.Handler do
         if Request.body_complete? request do
           path = String.split request.uri, "/", trim: true
           response = Router.route state.router, request, path
-          { nil, response }
+         { nil, response }
         else
           { request, nil }
         end
