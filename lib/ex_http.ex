@@ -5,7 +5,8 @@ defmodule ExHttp do
   ## Options
   - `:host` - IP address for the listening socket. Default is `:any`
   - `:port` - Port to start the server on. Default is `8080`
-  - `router` - An object that implements `ExHttp.Router` protocol, used to route requests
+  - `:router` - An object that implements `ExHttp.Router` protocol, used to route requests
+  - `:log` - Log requests. Default is `true`
 
   ## Stopping the server
   Use `GenServer.cast` with `:stop` atom to stop the server
@@ -13,11 +14,12 @@ defmodule ExHttp do
 
   use GenServer
 
-  defstruct socket: nil, router: nil
+  defstruct socket: nil, router: nil, log: true
 
   @type args :: [
     host: :inet.socket_address,
     port: :inet.port_number,
+    log: boolean | nil,
     router: any()
   ]
 
@@ -30,19 +32,22 @@ defmodule ExHttp do
     host = args[:host] || :any
     port = args[:port] || 8080
     router = args[:router]
+    log = if args[:log] == nil, do: true, else: args[:log]
+
+    Process.flag :trap_exit, true
 
     { :ok, socket } = open_socket host, port
 
     IO.puts "Server started at http://#{show_host host}:#{port}"
     send self(), :accept
 
-    { :ok, %__MODULE__{ socket: socket, router: router } }
+    { :ok, %__MODULE__{ socket: socket, router: router, log: log } }
   end
 
   @impl true
   def handle_info :accept, state do
     with { :ok, client } <- :gen_tcp.accept(state.socket, 1000) do
-      { :ok, pid } = GenServer.start ExHttp.Handler, [ client: client, router: state.router ]
+      { :ok, pid } = GenServer.start ExHttp.Handler, [ client: client, router: state.router, log: state.log ]
       :gen_tcp.controlling_process client, pid
     end
     send self(), :accept
@@ -56,6 +61,9 @@ defmodule ExHttp do
 
   @impl true
   def terminate _type, state do
+    if state.log do
+      IO.puts "Terminating the server"
+    end
     :gen_tcp.close state.socket
   end
 
