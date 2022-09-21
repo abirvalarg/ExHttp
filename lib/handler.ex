@@ -11,8 +11,8 @@ defmodule ExHttp.Handler do
   defstruct client: nil, request: nil, buffer: "", router: nil, log: true
 
   @impl true
-  def init [ client: client, router: router ] = args do
-    log = if args[:log] == nil, do: true, else: args[:log]
+  def init [ client: client, router: router, log: log ] do
+    log = if log == nil, do: true, else: log
     { :ok, %__MODULE__{ client: client, router: router, log: log } }
   end
 

@@ -34,8 +34,6 @@ defmodule ExHttp do
     router = args[:router]
     log = if args[:log] == nil, do: true, else: args[:log]
 
-    Process.flag :trap_exit, true
-
     { :ok, socket } = open_socket host, port
 
     IO.puts "Server started at http://#{show_host host}:#{port}"
