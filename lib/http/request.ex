@@ -28,7 +28,7 @@ defmodule ExHttp.Http.Request do
       { uri, args } = with [ uri, args ] <- String.split(uri, "?", parts: 2) do
         args = for pair <- String.split(args, "&") do
           with [ key, val ] <- String.split(pair, "=", parts: 2) do
-            { :uri_string.percent_decode(key), :uri_string.percent_decode(val) }
+            { URI.decode_www_form(key), URI.decode_www_form(val) }
           else
             [ key ] -> { key, "" }
           end
@@ -99,7 +99,7 @@ defmodule ExHttp.Http.Request do
   defp parse_urlencoded body do
     data = for pair <- String.split(body, "&") do
       with [ key, value ] <- String.split(pair, "=") do
-        { :uri_string.percent_decode(key), :uri_string.percent_decode(value) }
+        { URI.decode_www_form(key), URI.decode_www_form(value) }
       else
         [ key ] -> { key, "" }
       end
